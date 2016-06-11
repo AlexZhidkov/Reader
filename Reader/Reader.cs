@@ -16,15 +16,22 @@ namespace ReaderLib
                 synth.SetOutputToDefaultAudioDevice();
 
                 var builder = new PromptBuilder();
+                string blogEntryTitle;
+                string blogEntryBody;
+                char[] BadSymbols = { '*', '.', '-', '+', ';', ':', '&' };
+
+                blogEntryTitle = blogEntry.Title.Trim(BadSymbols);
+                blogEntryBody = blogEntry.Body.Trim(BadSymbols);
+
                 builder.StartParagraph();
                 builder.StartVoice(VoiceGender.Female);
-                builder.AppendText(blogEntry.Title);
+                builder.AppendText(blogEntryTitle);
                 builder.EndVoice();
                 builder.EndParagraph();
                 builder.AppendBreak();
                 builder.StartParagraph();
                 builder.StartVoice(VoiceGender.Male);
-                builder.AppendText(blogEntry.Body);
+                builder.AppendText(blogEntryBody);
                 builder.EndVoice();
                 builder.EndParagraph();
                 builder.AppendBreak();
