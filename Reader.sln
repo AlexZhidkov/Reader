@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReaderLib", "Reader\ReaderLib.csproj", "{E4C95A37-ABC6-4DC6-B092-D9D1568CA28D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReaderLibTests", "ReaderTests\ReaderLibTests.csproj", "{EE1C11FB-AD17-4C93-9A56-6F652A6CDF12}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextReader", "WindowsFormsApplication2\TextReader.csproj", "{36D88AB5-FCE6-4FE3-B75C-FF86D8C3210A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{EE1C11FB-AD17-4C93-9A56-6F652A6CDF12}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EE1C11FB-AD17-4C93-9A56-6F652A6CDF12}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EE1C11FB-AD17-4C93-9A56-6F652A6CDF12}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36D88AB5-FCE6-4FE3-B75C-FF86D8C3210A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36D88AB5-FCE6-4FE3-B75C-FF86D8C3210A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36D88AB5-FCE6-4FE3-B75C-FF86D8C3210A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36D88AB5-FCE6-4FE3-B75C-FF86D8C3210A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -28,18 +28,6 @@ namespace ReaderTests
         }
 
         [TestMethod]
-        public void ReadAllBlogEntries()
-        {
-            var reader = new Reader();
-            var blog = reader.GetBlog("http://sethgodin.typepad.com");
-
-            foreach (var entry in blog)
-            {
-                reader.Read(entry);
-            }
-        }
-
-        [TestMethod]
         public void ShowInstalledVoices()
         {
             var installedVoices = new StringBuilder();
