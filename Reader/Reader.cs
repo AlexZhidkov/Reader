@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using System.Text;
 using System.Web;
@@ -9,28 +10,148 @@ namespace ReaderLib
 {
     public class Reader
     {
+
+        public List<Entry> playlist = new List<ReaderLib.Entry>();
+        public Entry currentEntry = new Entry("", "");
+        public int currentlyPlaying = 0;
+        public int playerTime = 0;
+        public bool playerOnline = false;
+        public int entryWordCount = 0;
+        public int currentlyWordsRead = 0;
+        public SpeechSynthesizer synth = new SpeechSynthesizer();
+
+        public string removeBadTags(Entry blogEntry, string retType)
+        {
+            string TempString;
+            string[] badTags = { "*", "-", "+", ";", ":", "&", "[B]", "[/B]" };
+            if (retType.ToLower() == "title") {
+                TempString = blogEntry.Title;
+            } else if (retType.ToLower() == "body") {
+                TempString = blogEntry.Body;
+            } else return "Error at removeBadFlags.retType, entered Return type is: " + retType;
+
+            foreach (string S in badTags)
+            {
+                TempString = TempString.Replace(S, "");
+            }
+            return TempString;
+        }
+
+        public int InRange(int value, int minimum = 0, int maximum = 100)
+        {
+            if (value < minimum)
+            {
+                value = minimum;
+            } else if (value > maximum )
+            {
+                value = maximum;
+            }
+
+            return value;
+        }
+
+        public List<bool> playerState() //Возврат состояния плеера
+        {
+            List<bool> tempList = new List<bool>();
+            
+            tempList.Add(synth.State.ToString().ToLower() == "ready");
+            tempList.Add(synth.State.ToString().ToLower() == "speaking");
+            tempList.Add(currentlyPlaying == playlist.Count()-1);
+            tempList.Add(entryWordCount == currentlyWordsRead & entryWordCount > 0);
+            return tempList;
+        }
+
+      
+        public void playerStop()
+        {
+            currentlyWordsRead = 0;
+            playerTime = 0;
+            synth.SpeakAsyncCancelAll();
+            playerOnline = false;
+
+            if (synth.State.ToString().ToLower() == "paused") { synth.Resume(); }
+        }
+
+        public void playerPlay()
+        {
+            currentEntry = playlist[currentlyPlaying];
+            //if (currentlyPlaying > playlist.Count()) { currentlyPlaying = playlist.IndexOf(playlist.First()); }
+            entryWordCount = GetWordCount(currentEntry.Body)+GetWordCount(currentEntry.Title); //Прочитывается и Title, и Body
+            Read(currentEntry);
+            playerOnline = true;
+        }
+
+        public void playerColdPlay()
+        {
+            playerStop();
+            playerPlay();
+        }
+
+        public void nextEntry()
+        {
+            if (currentlyPlaying != playlist.Count()-1 )
+            {
+                currentlyPlaying++;
+            }
+
+            playerColdPlay();
+        }
+
+        public void prevEntry()
+        {
+            if (currentlyPlaying != playlist.IndexOf( playlist.First() ))
+            {
+                currentlyPlaying--;
+            }
+
+            playerColdPlay();
+        }
+
+        public int GetWordCount(string text)
+        {
+            int wordCount = 0, index = 0;
+
+            while (index < text.Length)
+            {
+                // check if current char is part of a word
+                while (index < text.Length && char.IsWhiteSpace(text[index]) == false)
+                    index++;
+
+                wordCount++;
+
+                // skip whitespace until next word
+                while (index < text.Length && char.IsWhiteSpace(text[index]) == true)
+                    index++;
+            }
+            return wordCount;
+        }
+
         public void Read(Entry blogEntry)
         {
-            using (var synth = new SpeechSynthesizer())
+
+            var builder = new PromptBuilder();
+
+            if (!playerState()[1])
             {
                 synth.SetOutputToDefaultAudioDevice();
-
-                var builder = new PromptBuilder();
-                builder.StartParagraph();
-                builder.StartVoice(VoiceGender.Female);
-                builder.AppendText(blogEntry.Title);
-                builder.EndVoice();
-                builder.EndParagraph();
-                builder.AppendBreak();
-                builder.StartParagraph();
-                builder.StartVoice(VoiceGender.Male);
-                builder.AppendText(blogEntry.Body);
-                builder.EndVoice();
-                builder.EndParagraph();
-                builder.AppendBreak();
-
-                synth.Speak(builder);
             }
+            
+
+            builder.StartParagraph();
+            builder.StartVoice(VoiceGender.Female);
+            builder.AppendText(removeBadTags(blogEntry, "Title"));
+            builder.EndVoice();
+            builder.EndParagraph();
+            builder.AppendBreak();
+            builder.StartParagraph();
+            builder.StartVoice(VoiceGender.Male);
+            builder.AppendText(removeBadTags(blogEntry, "Body"));
+            builder.EndVoice();
+            builder.EndParagraph();
+            builder.AppendBreak();
+
+            synth.SpeakAsync(builder);
+           
         }
 
         public IEnumerable<Entry> GetBlog(string url)
